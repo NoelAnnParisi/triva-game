@@ -1,4 +1,4 @@
-// create a start button 
+var statusOfGame = false;
 var wrong = 0;
 var right = 0;
 var unanswered = 0;
@@ -15,7 +15,7 @@ var gameObject = {
 
         answer: 'answer 1',
 
-        q1Choices: {
+        q1: {
 
             A: '<li class="answer">answer option one</li>',
 
@@ -40,13 +40,14 @@ var gameObject = {
 
         q2: {
 
-            first: '<li class="answer">answer option one</li>',
+            A: '<li class="answer">answer option one</li>',
 
-            second: '',
+            B: '<li> answer option 2</li>',
 
-            third: '',
+            C: '<li> answer option 2</li>',
 
-            fourth: ''
+            D: '<li> answer option 2</li>'
+
         },
 
         answered: ''
@@ -63,13 +64,14 @@ var gameObject = {
 
         q3: {
 
-            first: '<li class="answer">answer option one</li>',
+            A: '<li class="answer">answer option one</li>',
 
-            second: '',
+            B: '<li> answer option 3</li>',
 
-            third: '',
+            C: '<li> answer option </li>',
 
-            fourth: ''
+            D: '<li> answer option</li>'
+
         },
 
         answered: ''
@@ -85,13 +87,14 @@ var gameObject = {
 
         q4: {
 
-            first: '<li class="answer">answer option one</li>',
+            A: '<li class="answer">answer option one</li>',
 
-            second: '',
+            B: '<li> answer option 4</li>',
 
-            third: '',
+            C: '<li> answer option</li>',
 
-            fourth: ''
+            D: '<li> answer option</li>'
+
         },
 
         answered: ''
@@ -107,13 +110,14 @@ var gameObject = {
 
         q5: {
 
-            first: '<li class="answer">answer option one</li>',
+            A: '<li class="answer">answer option one</li>',
 
-            second: '',
+            B: '<li> answer option 5</li>',
 
-            third: '',
+            C: '<li> answer option</li>',
 
-            fourth: ''
+            D: '<li> answer option</li>'
+
         },
 
         answered: ''
@@ -130,13 +134,14 @@ var gameObject = {
 
         q6: {
 
-            first: '<li class="answer">answer option one</li>',
+            A: '<li class="answer">answer option one</li>',
 
-            second: '',
+            B: '<li> answer option 6</li>',
 
-            third: '',
+            C: '<li> answer option</li>',
 
-            fourth: ''
+            D: '<li> answer option</li>'
+
         },
 
         answered: ''
@@ -152,13 +157,14 @@ var gameObject = {
 
         q7: {
 
-            first: '<li class="answer">answer option one</li>',
+            A: '<li class="answer">answer option one</li>',
 
-            second: '',
+            B: '<li> answer option 7</li>',
 
-            third: '',
+            C: '<li> answer option</li>',
 
-            fourth: ''
+            D: '<li> answer option</li>'
+
         },
 
         answered: ''
@@ -174,19 +180,30 @@ var gameObject = {
 
         q8: {
 
-            first: '<li class="answer">answer option one</li>',
+            A: '<li class="answer">answer option one</li>',
 
-            second: '',
+            B: '<li> answer option 8</li>',
 
-            third: '',
+            C: '<li> answer option</li>',
 
-            fourth: ''
+            D: '<li> answer option</li>'
+
         },
 
         answered: ''
 
     },
 
+
+};
+
+var displayQuestions = function(object) {
+
+    for (let questions in object) {
+
+        $('.question').append(object[questions]);
+
+    }
 
 };
 
@@ -201,6 +218,7 @@ var displayChoices = function(object) {
 
 };
 
+
 var beginGame = function beginGame() {
 
     time = 31;
@@ -209,13 +227,15 @@ var beginGame = function beginGame() {
 
     $('#startGame').hide();
 
-    $('.question').html(gameObject.questionOne.question);
+    displayQuestions(gameObject.questionOne.question);
 
-    displayChoices(gameObject.questionOne.q1Choices);
+    displayChoices(gameObject.questionOne.q1);
 
     $('.answer').on('click', function() {
 
         answerTime = 6
+
+        answeredTimer();
 
         startAnswerTimer();
 
@@ -223,14 +243,11 @@ var beginGame = function beginGame() {
 
         $('.question-timer').empty();
 
-        console.log("is this being clicked?");
-
-        answeredTimer();
-
-
     });
 
 };
+
+
 
 
 var questionTimer = function timer() {
@@ -247,7 +264,7 @@ var questionTimer = function timer() {
     }
 };
 
-var startQuestionTimer = function () {
+var startQuestionTimer = function() {
 
     decreasedQuestionTime = setInterval(questionTimer, 1000);
 
@@ -256,17 +273,26 @@ var startQuestionTimer = function () {
 
 var answeredTimer = function() {
 
-    console.log("is this being ran?");
-
     answerTime -= 1;
 
     $('.answer-timer').html(answerTime);
 
-    if (time <= 0) {
+    if (answerTime <= 0) {
 
-        console.log("next question");
+        clearTimeout(decreasedQuestionTime);
 
-     }
+        clearTimeout(decreasedAnswerTime);
+
+        $('.question').empty();
+
+        $('.answerChoices').empty();
+
+        displayQuestions(gameObject.questionTwo.question);
+
+        displayChoices(gameObject.questionTwo.q2);
+
+
+    }
 
 };
 
@@ -275,11 +301,14 @@ var startAnswerTimer = function() {
     decreasedAnswerTime = setInterval(answeredTimer, 1000);
 }
 
+
 $('#startGame').on('click', function() {
 
     beginGame();
 
 });
+
+
 
 
 // when the correct answer is guessed a message and image will appear and
