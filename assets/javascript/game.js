@@ -119,13 +119,22 @@ var displayTimer = function displayTimer() {
 
 }
 
-var clearHTMLdivs = function clearHTMLdivs () {
+var clearHTMLdivs = function clearHTMLdivs() {
 
     $('.correct').empty();
     $('.incorrect').empty();
 
 }
 
+var gameOver = function gameOver() {
+
+    $('.question-timer').empty();
+    $('.question').html('<strong> GAME OVER</strong>');
+    $('.answerChoices').empty();
+    $('.correct').empty();
+    $('.incorrect').empty();
+    clearInterval(decrementTime);
+}
 
 var chooseRandomQuestion = function chooseRandomQuestion() {
 
@@ -141,6 +150,12 @@ var chooseRandomQuestion = function chooseRandomQuestion() {
 
     console.log(game.questions);
 
+    if (game.questions.length === 0) {
+
+        // when there are no more question to ask exit function and stop game
+        clearTimeout(waitToChoose);
+        var stopGame = setTimeout(gameOver(),4000);
+    }
 
     // display question  
 
@@ -161,8 +176,6 @@ var chooseRandomQuestion = function chooseRandomQuestion() {
 
     }
 
-
-
     // when a user clicks on an answer choice the answer timer should start 
     // and the question timer should stop/be hidden
 
@@ -180,7 +193,7 @@ var chooseRandomQuestion = function chooseRandomQuestion() {
             chooseRandomQuestion();
             displayTimer();
             clearHTMLdivs();
-        } ,5000);
+        }, 5000);
 
         if ($(event.target).attr('value') === 'true') {
 
@@ -194,6 +207,7 @@ var chooseRandomQuestion = function chooseRandomQuestion() {
         }
 
     })
+
 }
 
 
@@ -203,4 +217,6 @@ $('button').on('click', function(event) {
     chooseRandomQuestion();
     displayTimer();
 });
+
+
 
