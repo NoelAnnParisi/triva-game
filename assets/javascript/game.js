@@ -1,322 +1,172 @@
-var statusOfGame = false;
-var wrong = 0;
-var right = 0;
-var unanswered = 0;
-var time;
-var answerTime;
-var decreasedQuestionTime;
-var decreasedAnswerTime;
+// create an object containing an array of my questions/ choices/ and functions
+var time = 31;
+var answerTime = 6;
 
-var gameObject = {
+var game = {
 
-    questionOne: {
+    questions: [
 
-        question: "Question One?",
+        {
+            question: "Question One?",
+            answerChoices: [
 
-        answer: 'answer 1',
+                {
+                    text: "choice one",
+                    value: true
+                },
 
-        q1: {
+                {
+                    text: "choice two",
+                    value: false
+                },
 
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option</li>',
-
-            C: '<li> answer option</li>',
-
-            D: '<li> answer option</li>'
-
+                {
+                    text: "choice three",
+                    value: false
+                }
+            ]
         },
 
-        answered: ''
+        {
+            question: "Question Two?",
+            answerChoices: [
+
+                {
+                    text: "choice one",
+                    value: false
+                },
+
+                {
+                    text: "choice two",
+                    value: true
+                },
+
+                {
+                    text: "choice three",
+                    value: false
+                }
+            ]
+        },
+
+        {
+            question: "Question Three?",
+            answerChoices: [
+
+                {
+                    text: "choice one",
+                    value: false
+                },
+
+                {
+                    text: "choice two",
+                    value: false
+                },
+
+                {
+                    text: "choice three",
+                    value: true
+                }
+            ]
+        }
+
+    ],
+
+    questionTimer: function questionTimer(obj) {
+
+        let decrementTime = setInterval(function() {
+            time -= 1;
+            $('.question-timer').html(time);
+            if (time === 0) { clearTimeout(decrementTime) };
+        }, 1000);
+
 
     },
 
-    questionTwo: {
+    answerTimer: function answerTimer(obj) {
 
+        let decrementTime = setInterval(function() {
 
-        question: "question Two?",
+            answerTime -= 1;
 
-        answer: "answer 2",
+            $('.answer-timer').html(answerTime);
+            if (answerTime === 0) { clearTimeout(decrementTime) };
+        }, 1000)
 
-        q2: {
-
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option 2</li>',
-
-            C: '<li> answer option 2</li>',
-
-            D: '<li> answer option 2</li>'
-
-        },
-
-        answered: ''
-
-    },
-
-
-    questionThree: {
-
-
-        question: "question Three?",
-
-        answer: "answer 3",
-
-        q3: {
-
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option 3</li>',
-
-            C: '<li> answer option </li>',
-
-            D: '<li> answer option</li>'
-
-        },
-
-        answered: ''
-
-    },
-
-    questionFour: {
-
-
-        question: "question Four?",
-
-        answer: "answer 4",
-
-        q4: {
-
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option 4</li>',
-
-            C: '<li> answer option</li>',
-
-            D: '<li> answer option</li>'
-
-        },
-
-        answered: ''
-
-    },
-
-    questionFive: {
-
-
-        question: "question Five?",
-
-        answer: "answer 5",
-
-        q5: {
-
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option 5</li>',
-
-            C: '<li> answer option</li>',
-
-            D: '<li> answer option</li>'
-
-        },
-
-        answered: ''
-
-    },
-
-
-    questionSix: {
-
-
-        question: "question Six?",
-
-        answer: "answer 6",
-
-        q6: {
-
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option 6</li>',
-
-            C: '<li> answer option</li>',
-
-            D: '<li> answer option</li>'
-
-        },
-
-        answered: ''
-
-    },
-
-    questionSeven: {
-
-
-        question: "question Seven?",
-
-        answer: "answer 7",
-
-        q7: {
-
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option 7</li>',
-
-            C: '<li> answer option</li>',
-
-            D: '<li> answer option</li>'
-
-        },
-
-        answered: ''
-
-    },
-
-    questionEight: {
-
-
-        question: "question Eight?",
-
-        answer: "answer 8",
-
-        q8: {
-
-            A: '<li class="answer">answer option one</li>',
-
-            B: '<li> answer option 8</li>',
-
-            C: '<li> answer option</li>',
-
-            D: '<li> answer option</li>'
-
-        },
-
-        answered: ''
-
-    },
-
-
-};
-
-var displayQuestions = function(object) {
-
-    for (let questions in object) {
-
-        $('.question').append(object[questions]);
 
     }
+}
 
-};
+// select a random item from the questions array 
 
-var displayChoices = function(object) {
+var currentQuestion = game.questions[Math.floor(Math.random()* game.questions.length)];
 
-    for (let choice in object) {
+console.log(currentQuestion);
 
-        $('.answerChoices').append(object[choice]);
+// display question first 
 
-        // list style type none
-    }
+$('.question').html('<p id="question">' + currentQuestion.question + '</p>');
 
-};
+// display question timer
 
+game.questionTimer(game.questions[0]);
 
-var beginGame = function beginGame() {
+// display answer choices 
 
-    time = 31;
+for (let i = 0; i < currentQuestion.answerChoices.length; i++) {
 
-    startQuestionTimer();
+    $('.answerChoices').append("<li class='choices'>" + currentQuestion.answerChoices[i].text + "</li>");
 
-    $('#startGame').hide();
+    console.log(currentQuestion.answerChoices[i].value);
 
-    displayQuestions(gameObject.questionOne.question);
+    var val = currentQuestion.answerChoices[i].value;
 
-    displayChoices(gameObject.questionOne.q1);
-
-    $('.answer').on('click', function() {
-
-        answerTime = 6
-
-        answeredTimer();
-
-        startAnswerTimer();
-
-        clearTimeout(decreasedQuestionTime);
-
-        $('.question-timer').empty();
-
-    });
-
-};
-
-
-
-
-var questionTimer = function timer() {
-
-    time -= 1;
-
-    $('.question-timer').html(time);
-
-    if (time <= 0) {
-
-        alert("you are out of time!");
-        return;
-
-    }
-};
-
-var startQuestionTimer = function() {
-
-    decreasedQuestionTime = setInterval(questionTimer, 1000);
+    $('.answerChoices > li').last().attr('value', val);
 
 }
 
 
-var answeredTimer = function() {
+// when a user clicks on an answer choice the answer timer should start
 
-    answerTime -= 1;
+$('.answerChoices').on('click', function (event) {
 
-    $('.answer-timer').html(answerTime);
+    console.log(typeof $(event.target).attr('value'));
 
-    if (answerTime <= 0) {
+    if ($(event.target).attr('value') === 'true'){
 
-        clearTimeout(decreasedQuestionTime);
+        console.log('correct');
 
-        clearTimeout(decreasedAnswerTime);
+    // if wrong answer
 
-        $('.question').empty();
+    } else {
 
-        $('.answerChoices').empty();
-
-        displayQuestions(gameObject.questionTwo.question);
-
-        displayChoices(gameObject.questionTwo.q2);
-
-
+        console.log('incorrect')
     }
 
-};
-
-var startAnswerTimer = function() {
-
-    decreasedAnswerTime = setInterval(answeredTimer, 1000);
-}
+})
 
 
-$('#startGame').on('click', function() {
+// when button is clicked to start the game 
 
-    beginGame();
+// $('#startGame').on('click', function() {
 
-});
+//     game.questionTimer(game.questions[0]);
+// });
+
+//     // display the questions (one after another)
+
+//     game.questions.forEach(function(index) {
+
+//         console.log(index.question);
+
+//         $('.question').html(index.question);
+
+//         console.log(index.answerChoices);
+
+//         $('.answerChoices').html(index.answerChoices);
+//     });
 
 
+//     game.questionTimer(game.questions[0]);
+//     game.answerTimer(game.questions[1])
 
-
-// when the correct answer is guessed a message and image will appear and
-// a timer is set for about 5 seconds and then the next question is asked
-// when an incorrect answer is pressed same protocol as correct but "WRONG Answer" appears
-
-// when no answer is chosen by the time the timer is up similar protocol as above
-
-// after the timer is up on on either of the three screens above move onto next ?
-// create play again button
-// when pressed the triva game restarts (stats reset)
+// });
