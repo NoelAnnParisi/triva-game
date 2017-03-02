@@ -1,6 +1,9 @@
 // create an object containing an array of my questions/ choices/ and functions
 var time = 31;
 var answerTime = 6;
+var currentQuestion;
+var decrementTime;
+var waitToChoose;
 
 var game = {
 
@@ -67,13 +70,34 @@ var game = {
                     value: true
                 }
             ]
+        },
+
+        {
+            question: "Question Four?",
+            answerChoices: [
+
+                {
+                    text: "choice one",
+                    value: false
+                },
+
+                {
+                    text: "choice two",
+                    value: false
+                },
+
+                {
+                    text: "choice three",
+                    value: true
+                }
+            ]
         }
 
     ],
 
     questionTimer: function questionTimer(obj) {
 
-        let decrementTime = setInterval(function() {
+        decrementTime = setInterval(function() {
             time -= 1;
             $('.question-timer').html(time);
             if (time === 0) { clearTimeout(decrementTime) };
@@ -82,91 +106,101 @@ var game = {
 
     },
 
-    answerTimer: function answerTimer(obj) {
-
-        let decrementTime = setInterval(function() {
-
-            answerTime -= 1;
-
-            $('.answer-timer').html(answerTime);
-            if (answerTime === 0) { clearTimeout(decrementTime) };
-        }, 1000)
-
-
-    }
 }
 
 // select a random item from the questions array 
 
-var currentQuestion = game.questions[Math.floor(Math.random()* game.questions.length)];
+// make a function that chooses random current question & displays ?'s/choices
 
-console.log(currentQuestion);
+var displayTimer = function displayTimer() {
+    // display question timer
+    game.questionTimer(game.questions[0]);
+    time = 31;
 
-// display question first 
+}
 
-$('.question').html('<p id="question">' + currentQuestion.question + '</p>');
+var clearHTMLdivs = function clearHTMLdivs () {
 
-// display question timer
-
-game.questionTimer(game.questions[0]);
-
-// display answer choices 
-
-for (let i = 0; i < currentQuestion.answerChoices.length; i++) {
-
-    $('.answerChoices').append("<li class='choices'>" + currentQuestion.answerChoices[i].text + "</li>");
-
-    console.log(currentQuestion.answerChoices[i].value);
-
-    var val = currentQuestion.answerChoices[i].value;
-
-    $('.answerChoices > li').last().attr('value', val);
+    $('.correct').empty();
+    $('.incorrect').empty();
 
 }
 
 
-// when a user clicks on an answer choice the answer timer should start
+var chooseRandomQuestion = function chooseRandomQuestion() {
 
-$('.answerChoices').on('click', function (event) {
-
-    console.log(typeof $(event.target).attr('value'));
-
-    if ($(event.target).attr('value') === 'true'){
-
-        console.log('correct');
-
-    // if wrong answer
-
-    } else {
-
-        console.log('incorrect')
+    if (waitToChoose) {
+        clearTimeout(waitToChoose);
     }
 
-})
+    var currentQuestionIndex = Math.floor(Math.random() * game.questions.length);
+
+    var currentQuestion = game.questions[currentQuestionIndex]
+
+    game.questions.splice(currentQuestionIndex, 1);
+
+    console.log(game.questions);
 
 
-// when button is clicked to start the game 
+    // display question  
 
-// $('#startGame').on('click', function() {
-
-//     game.questionTimer(game.questions[0]);
-// });
-
-//     // display the questions (one after another)
-
-//     game.questions.forEach(function(index) {
-
-//         console.log(index.question);
-
-//         $('.question').html(index.question);
-
-//         console.log(index.answerChoices);
-
-//         $('.answerChoices').html(index.answerChoices);
-//     });
+    $('.question').html('<p id="question">' + currentQuestion.question + '</p>');
 
 
-//     game.questionTimer(game.questions[0]);
-//     game.answerTimer(game.questions[1])
+    // display answer choices 
 
-// });
+    for (let i = 0; i < currentQuestion.answerChoices.length; i++) {
+
+        $('.answerChoices').append("<li class='choices'>" + currentQuestion.answerChoices[i].text + "</li>");
+
+        console.log(currentQuestion.answerChoices[i].value);
+
+        var val = currentQuestion.answerChoices[i].value;
+
+        $('.answerChoices > li').last().attr('value', val);
+
+    }
+
+
+
+    // when a user clicks on an answer choice the answer timer should start 
+    // and the question timer should stop/be hidden
+
+    $('.answerChoices').on('click', function(event) {
+
+        $('.question-timer').empty();
+
+        $('.answerChoices').empty();
+
+        $('.question').empty();
+
+        clearInterval(decrementTime);
+
+        waitToChoose = setTimeout(function() {
+            chooseRandomQuestion();
+            displayTimer();
+            clearHTMLdivs();
+        } ,5000);
+
+        if ($(event.target).attr('value') === 'true') {
+
+            $('.correct').html("<strong> Correct </strong");
+
+            // if wrong answer
+
+        } else {
+
+            $('.incorrect').html("<strong> Incorrect </strong");
+        }
+
+    })
+}
+
+
+// when button is clicked start the game
+$('button').on('click', function(event) {
+
+    chooseRandomQuestion();
+    displayTimer();
+});
+
