@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ajax Practice</title>
+</head>
+
+<body>
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript">
+    var baseURL = "http://www.omdbapi.com/?t=";
+    var movieTitle = "usual+suspects";
+    var nextMovieTitle = "moonlight";
+
+    $.ajax({
+
+        url: baseURL + movieTitle,
+        method: "GET",
+    }).done(function(response) {
+		
+		console.log(response);
+
+    });
+
+
+    $.ajax({
+
+    	url: baseURL + nextMovieTitle,
+    	method:"GET"
+    }).done(function(response){
+
+    	console.log(response)
+    });
+
+    </script>
+</body>
+
+</html>
