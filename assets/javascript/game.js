@@ -2,7 +2,7 @@
 var statusOfGame = false;
 var decrementTime;
 var waitToChoose;
-var time = 31;
+var time = 10;
 var incorrectAnswers = 0;
 var correctAnswers = 0;
 var value;
@@ -12,6 +12,28 @@ var currentQuestionIndex;
 var game = {
 
     questions: [
+
+
+        {
+            question: "The companies HP, Microsoft and Apple were all started in a what?",
+            answerChoices: [
+
+                {
+                    text: "A. Shed",
+                    value: false
+                },
+
+                {
+                    text: "B. College Dorm",
+                    value: false
+                },
+
+                {
+                    text: "C. Garage",
+                    value: true
+                }
+            ]
+        },
 
         {
             question: "In what year was the first Apple computer released?",
@@ -55,26 +77,6 @@ var game = {
             ]
         },
 
-        {
-            question: "The companies HP, Microsoft and Apple were all started in a what?",
-            answerChoices: [
-
-                {
-                    text: "A. Shed",
-                    value: false
-                },
-
-                {
-                    text: "B. College Dorm",
-                    value: false
-                },
-
-                {
-                    text: "C. Garage",
-                    value: true
-                }
-            ]
-        },
 
         {
             question: "Fonts that contain small decorative lines at the end of a stroke are known as what?",
@@ -108,9 +110,13 @@ var game = {
         decrementTime = setInterval(function() {
             time -= 1;
             $('.question-timer').html(time);
-            if (time === 0) {
-                clearInterval(decrementTime);
+            if (time === 0 && statusOfGame === true)
+            /// change status of game to false when length of the game array is 0 
+            {
+                console.log('decrement time is running');
                 $('.question-timer').text('Out of time!');
+                console.log("114")
+
                 game.chooseRandomQuestion();
             };
         }, 1000);
@@ -120,10 +126,18 @@ var game = {
 
     chooseRandomQuestion: function chooseRandomQuestion(obj) {
 
+        // move this to wait choose function!! (hopefully)
 
-         if (game.questions.length === 0) {
+        if (game.questions.length === 0) {
+
+            console.log("This is the length of the game: " + game.questions.length);
+
+            console.log("this should run")
+
+            clearTimeout(waitToChoose);
 
             clearInterval(decrementTime);
+
             // I want to display a game over sentence
             $('.correct').html('<strong> GAME OVER</strong>');
             $('.incorrect').html('<strong> GAME OVER</strong>');
@@ -135,6 +149,7 @@ var game = {
 
             // display their score!
             $('.score').html("<p>You got this many wrong: </p>" + incorrectAnswers + "<p>You got this many correct: </p>" + correctAnswers);
+            $('.playAgain').html(" <button type='submit' id='playAgain'>Want to play again?</button> ");
 
         }
 
@@ -164,32 +179,41 @@ var game = {
 
     assignValueToChoices: function assignValueToChoices(obj) {
 
-        for (let i = 0; i < game.questions[0].answerChoices.length; i++) {
+        for (let i = 0; i < game.questions[currentQuestionIndex].answerChoices.length; i++) {
 
-            console.log("length of game array " + game.questions[0].answerChoices.length)
+            console.log("value is ", game.questions[currentQuestionIndex].answerChoices[i].value);
 
-            var val = game.questions[0].answerChoices[i].value;
+            console.log("length of game array " + game.questions[currentQuestionIndex].answerChoices.length)
 
-            $('.answerChoices > li').last().attr('value', val);
+            var val = game.questions[currentQuestionIndex].answerChoices[i].value;
+
+            // $('.answerChoices > li').children().eq(i).attr('data-value', val);
 
             console.log(typeof val);
 
-            $('.answerChoices').append("<li class='choices'>" + game.questions[currentQuestionIndex].answerChoices[i].text + "</li>");
+            $('.answerChoices').append("<li class='choices' data-value='" + val + "'>" + game.questions[currentQuestionIndex].answerChoices[i].text + "</li>");
 
             console.log(game.questions[currentQuestionIndex].answerChoices[i].text);
         }
     },
 
-    answerClickEvent: function answerClickEvent() {
+    answerClickEvent: function answerClickEvent(event) {
+
 
         // how would I use a switch function to check the 
         // length of the array so that me code doesnt break at the end of the arry?
         // https://www.w3schools.com/js/exercise.asp?filename=exercise_switch1
 
+        console.log("This is the event : ", event.target);
+
         game.questions.splice(currentQuestionIndex, 1);
 
 
         console.log(game.questions);
+
+        $('.correct').empty();
+
+        $('.incorrect').empty();
 
         $('.scoreBox').show();
 
@@ -201,9 +225,9 @@ var game = {
 
         $('.container').hide();
 
-        console.log($(event.target).attr('value'))
+        console.log($(event.target).attr('data-value'))
 
-        if ($(event.target).attr('value') === 'true') {
+        if ($(event.target).attr('data-value') === 'true') {
 
             $('.correct').html("<strong> Correct </strong>");
 
@@ -226,9 +250,12 @@ var game = {
         // set a timer to run choose random question function
 
         waitToChoose = setTimeout(function() {
+
+            console.log("242");
+
             game.chooseRandomQuestion();
             clearInterval(decrementTime);
-            time = 30;
+            time = 10;
         }, 5000);
 
         console.log('something is being clicked');
@@ -245,6 +272,7 @@ $('button').on('click', function(event) {
     $('.question-timer').hide();
     $('.scoreBox').hide();
     $('button').toggle();
+    console.log("261")
 
     game.chooseRandomQuestion();
 
@@ -252,188 +280,20 @@ $('button').on('click', function(event) {
 
 $('.answerChoices').on('click', function(event) {
 
-    game.answerClickEvent();
+    game.answerClickEvent(event);
+
+})
+
+$('.playAgain').on('click', function() {
+
+    statusOfGame = true;
+    console.log(statusOfGame);
+    $('.question-timer').hide();
+    $('.scoreBox').hide();
+    $('button').toggle();
+    console.log("279")
+    game.chooseRandomQuestion();
 
 })
 
 $('.container').hide();
-
-
-// // select a random item from the questions array 
-
-// // make a function that chooses random current question & displays ?'s/choices
-
-// var displayTimer = function displayTimer() {
-//     // display question timer
-//     console.log("The displayTimer function is running");
-//     game.questionTimer(game.questions[0]);
-//     time = 31;
-
-// }
-
-// var clearHTMLdivs = function clearHTMLdivs() {
-
-//     console.log("The clearHTMLdivs function is running");
-
-//     $('.correct').empty();
-//     $('.incorrect').empty();
-
-// }
-
-// //when all the questions in the array have been asked it's time to end the game!
-// var gameOver = function gameOver() {
-
-//     console.log("The gameOver function is running!")
-//         //I want to stop the timer and clear the div
-//     clearInterval(decrementTime);
-//     // I want to display a game over sentence
-//     $('.question').html('<strong> GAME OVER</strong>');
-
-//     // no more anser choices should show!
-//     $('.answerChoices').empty();
-//     // empty the correct and incorrect divs
-//     $('.correct').empty();
-//     $('.incorrect').empty();
-
-//     //display their score!
-//     $('.score').html("<p>You got this many wrong: </p>" + incorrectAnswers + "<p>You got this many correct: </p>" + correctAnswers);
-// }
-
-// var incrementScore = function(event) {
-
-//     console.log("The incrementScore function is running!")
-
-//     // if they clicked on the right answer increment their score
-//     if (event.target.attributes[1].nodeValue === "true") {
-
-//         correctAnswers++;
-//         console.log("The number of correct answers: " + correctAnswers);
-
-//         // if they got it wrong do the same thing!
-//     } else {
-
-//         incorrectAnswers++;
-//         console.log("The number of incorrect answers: " + incorrectAnswers);
-
-
-//     }
-
-// }
-
-// // main function of the game!
-// var chooseRandomQuestion = function chooseRandomQuestion() {
-
-//     $('.question-timer').show();
-//     $('.container').show();
-//     $('.scoreBox').hide();
-
-//     console.log("The chooseRandomQuestion function is running!");
-
-//     // if set timer variable is true, clear it so that it doesn't load every 3 secs
-//     if (waitToChoose) {
-//         clearTimeout(waitToChoose);
-//     }
-
-//     // choose random question from the game.questions object
-
-//     currentQuestionIndex = Math.floor(Math.random() * game.questions.length);
-
-//     currentQuestion = game.questions[currentQuestionIndex];
-
-//     // display question  
-
-//     $('.question').html('<p id="question">' + currentQuestion.question + '</p>');
-
-
-//     // assign value to each answer choice so I can access it later to increment score 
-
-//     for (let i = 0; i < currentQuestion.answerChoices.length; i++) {
-
-//         $('.answerChoices').append("<li class='choices'>" + currentQuestion.answerChoices[i].text + "</li>");
-
-//         console.log(currentQuestion.answerChoices[i].value);
-
-//         var val = currentQuestion.answerChoices[i].value;
-
-//         $('.answerChoices > li').last().attr('value', val);
-
-//     }
-
-//     // when a user clicks on an answer choice the answer timer should start 
-//     // and the question timer should stop/be hidden
-
-//     $('.answerChoices').on('click', function(event) {
-
-//         console.log("an answer choice was clicked and clearInterval is running");
-
-//         $('.container').hide();
-
-
-//         $('.question-timer').empty();
-
-//         $('.answerChoices').empty();
-
-//         $('.question').empty();
-
-//         clearInterval(decrementTime);
-
-//         waitToChoose = setTimeout(function() {
-//             chooseRandomQuestion();
-//             displayTimer();
-//             clearHTMLdivs();
-//         }, 3000);
-
-//         if ($(event.target).attr('value') === 'true') {
-
-//             $('.correct').html("<strong> Correct </strong");
-
-//             // if wrong answer
-
-//         } else {
-
-//             $('.incorrect').html("<strong> Incorrect </strong");
-
-//         }
-
-//     })
-
-// }
-
-
-// // console.log(game.questions[0].answerChoices[0].value);
-// // when button is clicked start the game
-// $('button').on('click', function(event) {
-
-//     $('button').toggle();
-
-//     chooseRandomQuestion();
-//     displayTimer();
-// });
-
-// $('.answerChoices').on('click', function() {
-
-//     $('.question-timer').hide();
-//     $('.scoreBox').show();
-
-//     incrementScore(event);
-//     //take the qyestion that was just asked out of the array
-//     game.questions.splice(currentQuestionIndex, 1);
-//     console.log(currentQuestionIndex);
-
-//     if (game.questions.length === 0) {
-
-//         // when there are no more question to ask exit function and stop game
-//         clearTimeout(waitToChoose);
-//         var stopGame = setTimeout(gameOver(), 4000);
-//         console.log("how is this doing?");
-
-//         if (gameOver) {
-//             clearInterval(decrementTime);
-//             console.log("Do you want to play again?");
-
-//         }
-
-//     }
-
-
-// });

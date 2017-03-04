@@ -82,6 +82,12 @@ p, .question, .answerChoices, .question-timer, .correct, .incorrect {
 
 }
 
+.playAgain{
+
+    font-size: 3vh;
+
+}
+
 
 .correct, .incorrect {
 
