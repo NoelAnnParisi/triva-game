@@ -110,13 +110,9 @@ var game = {
         decrementTime = setInterval(function() {
             time -= 1;
             $('.question-timer').html(time);
-            if (time === 0 && statusOfGame === true)
-            /// change status of game to false when length of the game array is 0 
-            {
+            if (time === 0 && statusOfGame === true) {
                 console.log('decrement time is running');
                 $('.question-timer').text('Out of time!');
-                console.log("114")
-
                 game.chooseRandomQuestion();
             };
         }, 1000);
@@ -125,33 +121,6 @@ var game = {
     },
 
     chooseRandomQuestion: function chooseRandomQuestion(obj) {
-
-        // move this to wait choose function!! (hopefully)
-
-        if (game.questions.length === 0) {
-
-            console.log("This is the length of the game: " + game.questions.length);
-
-            console.log("this should run")
-
-            clearTimeout(waitToChoose);
-
-            clearInterval(decrementTime);
-
-            // I want to display a game over sentence
-            $('.correct').html('<strong> GAME OVER</strong>');
-            $('.incorrect').html('<strong> GAME OVER</strong>');
-            //           no more anser choices should show!
-            $('.answerChoices').empty();
-            // empty the correct and incorrect divs
-            $('.correct').empty();
-            $('.incorrect').empty();
-
-            // display their score!
-            $('.score').html("<p>You got this many wrong: </p>" + incorrectAnswers + "<p>You got this many correct: </p>" + correctAnswers);
-            $('.playAgain').html(" <button type='submit' id='playAgain'>Want to play again?</button> ");
-
-        }
 
         $('.answerChoices').empty();
         $('.question').show();
@@ -251,18 +220,41 @@ var game = {
 
         waitToChoose = setTimeout(function() {
 
-            console.log("242");
+            // change status of game to false when length of the game array is 0
+            if (game.questions.length === 0) {
 
-            game.chooseRandomQuestion();
-            clearInterval(decrementTime);
-            time = 10;
-        }, 5000);
+                statusOfGame = false;
 
-        console.log('something is being clicked');
+                console.log(statusOfGame);
 
+                console.log("This is the length of the game: " + game.questions.length);
+
+                console.log("this should run")
+
+                clearTimeout(waitToChoose);
+
+                // I want to display a game over sentence
+                // I only want to do this once the game is over!
+
+                $('.correct').html('<strong> GAME OVER</strong>');
+                $('.incorrect').html('<strong> GAME OVER</strong>');
+                // no more anser choices should show!
+                $('.answerChoices').empty();
+                // empty the correct and incorrect divs
+                $('.correct').empty();
+                $('.incorrect').empty();
+
+                //display their score!
+                $('.score').html("<p>You got this many wrong: </p>" + incorrectAnswers + "<p>You got this many correct: </p>" + correctAnswers);
+                $('.playAgain').html("<button type='submit' id='playAgain'>Want to play again?</button> ");
+            } else {
+                game.chooseRandomQuestion();
+                clearInterval(decrementTime);
+                time = 10;
+            }
+        }, 5000)
     }
-
-};
+}
 
 // when (statusOfGame) call choose random question function and display questions
 $('button').on('click', function(event) {
