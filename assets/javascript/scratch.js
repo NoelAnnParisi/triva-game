@@ -1,10 +1,3 @@
-//to do list:
-
-// fix restart dom elements 
-// assign the correct answer to a variable 
-// make sure last score point increments and shows!
-// CSS!!
-
 var statusOfGame;
 var currentQuestion;
 var currentQuestionIndex;
@@ -187,7 +180,7 @@ var game = {
 
             if (time === 0) {
 
-                game.checkLength();
+            	game.checkLength();
 
                 game.incorrect();
 
@@ -201,10 +194,10 @@ var game = {
 
     chooseRandomQuestion: function chooseRandomQuestion() {
 
-        if (statusOfGame === false) {
+    	if (statusOfGame === false) {
 
-            return;
-        }
+    		return;
+    	}
 
         clearTimeout(chooseAgain);
 
@@ -218,11 +211,11 @@ var game = {
 
         $('.question').show();
 
-        currentQuestionIndex = Math.floor(Math.random() * game.questionsCopy.length);
+        currentQuestionIndex = Math.floor(Math.random() * game.questions.length);
 
         console.log("Current question Index " + currentQuestionIndex);
 
-        currentQuestion = game.questionsCopy[currentQuestionIndex].question;
+        currentQuestion = game.questions[currentQuestionIndex].question;
 
         game.assignValueToChoices();
 
@@ -234,32 +227,32 @@ var game = {
 
         $('.scoreBox').hide();
 
-        game.questionsCopy.splice(currentQuestionIndex, 1);
+        game.questions.splice(currentQuestionIndex, 1);
 
     },
 
     assignValueToChoices: function assignValueToChoices() {
 
-        for (let i = 0; i < game.questionsCopy[currentQuestionIndex].answerChoices.length; i++) {
+        for (let i = 0; i < game.questions[currentQuestionIndex].answerChoices.length; i++) {
 
-            console.log("value is ", game.questionsCopy[currentQuestionIndex].answerChoices[i].value);
+            console.log("value is ", game.questions[currentQuestionIndex].answerChoices[i].value);
 
-            console.log("length of game array " + game.questionsCopy[currentQuestionIndex].answerChoices.length)
+            console.log("length of game array " + game.questions[currentQuestionIndex].answerChoices.length)
 
-            var val = game.questionsCopy[currentQuestionIndex].answerChoices[i].value;
+            var val = game.questions[currentQuestionIndex].answerChoices[i].value;
 
             console.log(typeof val);
 
-            $('.answerChoices').append("<li class='choices' data-value='" + val + "'>" + game.questionsCopy[currentQuestionIndex].answerChoices[i].text + "</li>");
+            $('.answerChoices').append("<li class='choices' data-value='" + val + "'>" + game.questions[currentQuestionIndex].answerChoices[i].text + "</li>");
 
-            console.log(game.questionsCopy[currentQuestionIndex].answerChoices[i].text);
+            console.log(game.questions[currentQuestionIndex].answerChoices[i].text);
 
         }
     },
 
     answerClickEvent: function answerClickEvent(event) {
 
-        game.checkLength();
+    	game.checkLength();
 
         $('.correct').empty();
 
@@ -288,17 +281,15 @@ var game = {
 
     checkLength: function() {
 
-        if (game.questionsCopy.length === 0) {
+        if (game.questions.length === 0) {
 
-            statusOfGame = false;
+        	statusOfGame = false;
  
             console.log("the check length function is running!");
 
             clearTimeout(chooseAgain);
 
             clearInterval(decrementTime);
-
-            $('.scoreBox').show();
 
             $('.question-timer').empty();
 
@@ -320,19 +311,9 @@ var game = {
         }
     },
 
-    flush: function() {
+    replayGame: function () {
 
-        game.questionsCopy = game.questions.slice(0);
-
-        $('.container').show();
-
-        $('.question-timer').hide();
-
-        $('.scoreBox').hide();
-
-        $('button').toggle();
-
-        game.chooseRandomQuestion(); 
+    	game.chooseRandomQuestion();
 
     }
 
@@ -341,7 +322,15 @@ var game = {
 
 $('button').on('click', function(event) {
 
-    game.flush(); 
+	game.questions = game.questions.slice(0);
+
+    $('.question-timer').hide();
+
+    $('.scoreBox').hide();
+
+    $('button').toggle();
+
+    game.chooseRandomQuestion();
 
 });
 
@@ -352,9 +341,15 @@ $('.answerChoices').on('click', function(event) {
 });
 
 
-$('.playAgain').on('click', function(event) {
+$('.playAgain').on('click', function() {
 
-    game.flush(); 
+    $('.question-timer').hide();
+
+    $('.scoreBox').hide();
+
+    $('button').toggle();
+
+    game.replayGame();
     
 });
 
