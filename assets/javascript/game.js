@@ -1,8 +1,4 @@
 //to do list:
-
-// fix restart dom elements 
-// assign the correct answer to a variable 
-// make sure last score point increments and shows!
 // CSS!!
 
 var statusOfGame;
@@ -14,7 +10,10 @@ var decrementTime;
 var incorrectAnswers = 0;
 var correctAnswers = 0;
 var chooseAgain;
+var waitToChoose;
 var correctAnswer;
+var timedOut;
+
 
 var game = {
 
@@ -130,13 +129,13 @@ var game = {
 
     incorrect: function() {
 
-        console.log("the length at the incorrect function " + game.questions.length);
+        incorrectAnswers++;
 
         game.checkLength();
 
-        if (time === 0) {
+        clearInterval(decrementTime);
 
-            clearInterval(decrementTime);
+        if (timedOut) {
 
             $('.question-timer').text('Out of time!');
 
@@ -144,34 +143,28 @@ var game = {
 
             $('.question').html("You didn't pick anything!");
 
+            $('.correctImage').html('<p> The correct answer is: ' + correctAnswer + '</p>');
+
             $('.answerChoices').empty();
 
-            chooseAgain = setTimeout(function() {
-
-                $('.question-timer').empty();
-
-                game.chooseRandomQuestion();
-
-            }, 3000);
-
         } else {
-
-            clearInterval(decrementTime);
 
             $('.incorrect').html("<strong> Incorrect </strong>");
 
             $('.correctImage').html('<p> The correct answer is: ' + correctAnswer + '</p>');
 
-            incorrectAnswers++;
-
-            chooseAgain = setTimeout(function() {
-
-                $('.question-timer').empty();
-
-                game.chooseRandomQuestion();
-
-            }, 3000);
         }
+
+        chooseAgain = setTimeout(function() {
+
+            $('.question-timer').empty();
+
+            $('.correctImage').empty();
+
+            game.chooseRandomQuestion();
+
+        }, 3000);
+
     },
 
 
@@ -187,7 +180,7 @@ var game = {
 
             if (time === 0) {
 
-                game.checkLength();
+                timedOut = true;
 
                 game.incorrect();
 
@@ -205,6 +198,8 @@ var game = {
 
             return;
         }
+
+        clearTimeout(waitToChoose);
 
         clearTimeout(chooseAgain);
 
@@ -234,6 +229,10 @@ var game = {
 
         $('.scoreBox').hide();
 
+        $('.correct').empty();
+
+        $('.incorrect').empty();
+
         game.questionsCopy.splice(currentQuestionIndex, 1);
 
     },
@@ -242,17 +241,14 @@ var game = {
 
         for (let i = 0; i < game.questionsCopy[currentQuestionIndex].answerChoices.length; i++) {
 
-            console.log("value is ", game.questionsCopy[currentQuestionIndex].answerChoices[i].value);
+            var choice = game.questionsCopy[currentQuestionIndex].answerChoices[i];
 
-            console.log("length of game array " + game.questionsCopy[currentQuestionIndex].answerChoices.length)
+            if (choice.value === true){
 
-            var val = game.questionsCopy[currentQuestionIndex].answerChoices[i].value;
+                correctAnswer = choice.text;
+            }
 
-            console.log(typeof val);
-
-            $('.answerChoices').append("<li class='choices' data-value='" + val + "'>" + game.questionsCopy[currentQuestionIndex].answerChoices[i].text + "</li>");
-
-            console.log(game.questionsCopy[currentQuestionIndex].answerChoices[i].text);
+            $('.answerChoices').append("<li class='choices' data-value='" + choice.value + "'>" + choice.text + "</li>");
 
         }
     },
@@ -306,13 +302,7 @@ var game = {
 
             $('.correct').html('<strong> GAME OVER</strong>');
 
-            $('.incorrect').html('<strong> GAME OVER</strong>');
-
             $('.answerChoices').empty();
-
-            // $('.correct').empty();
-
-            // $('.incorrect').empty();
 
             $('.score').html("<p>You got this many wrong: </p>" + incorrectAnswers + "<p>You got this many correct: </p>" + correctAnswers);
 
@@ -324,15 +314,25 @@ var game = {
 
         game.questionsCopy = game.questions.slice(0);
 
+        console.log('is flush flushing!');
+
         $('.container').show();
+
+        $('.question').empty();
 
         $('.question-timer').hide();
 
         $('.scoreBox').hide();
 
-        $('button').toggle();
+        $('#startGame').toggle(); 
 
-        game.chooseRandomQuestion(); 
+        $('.score').empty();
+
+        $('.playAgain').empty();   
+
+        $('.correct').empty();
+
+        $('.incorrect').empty();    
 
     }
 
@@ -342,6 +342,8 @@ var game = {
 $('button').on('click', function(event) {
 
     game.flush(); 
+
+    game.chooseRandomQuestion();
 
 });
 
@@ -354,8 +356,21 @@ $('.answerChoices').on('click', function(event) {
 
 $('.playAgain').on('click', function(event) {
 
-    game.flush(); 
+    $('#startGame').toggle(true);
+
+    incorrectAnswers = 0;
+        
+    correctAnswers = 0;
+
+    statusOfGame = true;
+
+    game.flush();
+
+    waitToChoose = setTimeout(function(){
+
+        game.chooseRandomQuestion();
+
+    }, 1000);
+
     
 });
-
-$('.container').hide();
